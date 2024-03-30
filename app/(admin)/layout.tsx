@@ -7,13 +7,13 @@ export default function AdminLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
+    <div>
       <Nav>
         <NavLink href={"/"}>Dashboard</NavLink>
         <NavLink href={"/"}>products</NavLink>
         <NavLink href={"/"}>posts</NavLink>
       </Nav>
-      <div className="container my-6">{children}</div>
-    </>
+      <div>{children}</div>
+    </div>
   );
 }
