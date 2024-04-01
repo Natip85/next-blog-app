@@ -12,14 +12,25 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import AuthCardWrapper from "./AuthCardWrapper";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { LoginSchema } from "@/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
+import FormError from "../FormError";
+import FormSuccess from "../FormSuccess";
+import axios from "axios";
+import { useSearchParams } from "next/navigation";
 
 const LoginForm = () => {
-  const [isPending, startTransition] = useTransition();
+  const searchParams = useSearchParams();
+  const urlError =
+    searchParams.get("error") === "OAuthAccountNotLinked"
+      ? "Email already in use with different account"
+      : "";
+  const [isLoading, setIsLoading] = useState(false);
   const [showTwoFactor, setShowTwoFactor] = useState(false);
+  const [error, setError] = useState<string | undefined>("");
+  const [success, setSuccess] = useState<string | undefined>("");
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -29,7 +40,6 @@ const LoginForm = () => {
     },
   });
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-    console.log(values);
     // setError("");
     // setSuccess("");
     // startTransition(() => {
@@ -49,6 +59,23 @@ const LoginForm = () => {
     //     })
     //     .catch(() => setError("Somethuing went wrong"));
     // });
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
+    axios
+      .post("/api/login", values)
+      .then((data) => {
+        if (data.status === 200) {
+          setSuccess(data.data.message);
+          form.reset();
+        }
+      })
+      .catch((res) => {
+        setError(res.response.data);
+        setIsLoading(false);
+        form.reset();
+      })
+      .finally(() => setIsLoading(false));
   };
   return (
     <AuthCardWrapper
@@ -70,7 +97,7 @@ const LoginForm = () => {
                     <FormControl>
                       <Input
                         {...field}
-                        disabled={isPending}
+                        disabled={isLoading}
                         placeholder="123456"
                       />
                     </FormControl>
@@ -91,7 +118,7 @@ const LoginForm = () => {
                         <Input
                           autoComplete="user-email"
                           {...field}
-                          disabled={isPending}
+                          disabled={isLoading}
                           placeholder="john.doe@example.com"
                           type="email"
                         />
@@ -112,7 +139,7 @@ const LoginForm = () => {
                           {...field}
                           placeholder="******"
                           type="password"
-                          disabled={isPending}
+                          disabled={isLoading}
                         />
                       </FormControl>
                       <Button
@@ -130,9 +157,9 @@ const LoginForm = () => {
               </>
             )}
           </div>
-          {/* <FormError message={error || urlError} />
-          <FormSuccess message={success} /> */}
-          <Button disabled={isPending} type="submit" className="w-full">
+          <FormError message={error || urlError} />
+          <FormSuccess message={success} />
+          <Button disabled={isLoading} type="submit" className="w-full">
             {showTwoFactor ? "Confirm" : "Login"}
           </Button>
         </form>

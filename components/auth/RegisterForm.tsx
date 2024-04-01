@@ -1,6 +1,6 @@
 "use client";
 import * as z from "zod";
-import { useTransition } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -15,10 +15,13 @@ import AuthCardWrapper from "./AuthCardWrapper";
 import { useForm } from "react-hook-form";
 import { RegisterSchema } from "@/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import axios from "axios";
+import FormError from "../FormError";
+import FormSuccess from "../FormSuccess";
 const RegisterForm = () => {
-  const [isPending, startTransition] = useTransition();
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | undefined>("");
+  const [success, setSuccess] = useState<string | undefined>("");
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
@@ -28,15 +31,21 @@ const RegisterForm = () => {
     },
   });
   const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
-    console.log(values);
-    // setError("");
-    // setSuccess("");
-    // startTransition(() => {
-    //   register(values).then((data) => {
-    //     setError(data.error);
-    //     setSuccess(data.success);
-    //   });
-    // });
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
+    axios
+      .post("/api/register", values)
+      .then((data) => {
+        if (data.status === 200) {
+          setSuccess(data.data.message);
+        }
+      })
+      .catch((res) => {
+        setError(res.response.data);
+        setIsLoading(false);
+      })
+      .finally(() => setIsLoading(false));
   };
   return (
     <AuthCardWrapper
@@ -58,7 +67,7 @@ const RegisterForm = () => {
                     <Input
                       autoComplete="username"
                       {...field}
-                      disabled={isPending}
+                      disabled={isLoading}
                       placeholder="John Doe"
                       type="text"
                     />
@@ -77,7 +86,7 @@ const RegisterForm = () => {
                     <Input
                       autoComplete="user-email"
                       {...field}
-                      disabled={isPending}
+                      disabled={isLoading}
                       placeholder="john.doe@example.com"
                       type="email"
                     />
@@ -98,7 +107,7 @@ const RegisterForm = () => {
                       {...field}
                       placeholder="******"
                       type="password"
-                      disabled={isPending}
+                      disabled={isLoading}
                     />
                   </FormControl>
                   <FormMessage />
@@ -106,9 +115,9 @@ const RegisterForm = () => {
               )}
             />
           </div>
-          {/* <FormError message={error} />
-          <FormSuccess message={success} /> */}
-          <Button disabled={isPending} type="submit" className="w-full">
+          <FormError message={error} />
+          <FormSuccess message={success} />
+          <Button disabled={isLoading} type="submit" className="w-full">
             Create account
           </Button>
         </form>
