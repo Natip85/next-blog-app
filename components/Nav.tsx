@@ -6,7 +6,7 @@ import { ComponentProps, ReactNode } from "react";
 
 export function Nav({ children }: { children: ReactNode }) {
   return (
-    <nav className="container max-w-6xl flex justify-between items-center p-4">
+    <nav className="container max-w-6xl flex justify-between items-stretch">
       {children}
     </nav>
   );
@@ -18,8 +18,8 @@ export function NavLink(props: Omit<ComponentProps<typeof Link>, "className">) {
     <Link
       {...props}
       className={cn(
-        "hover:text-secondary focus-visible:text-secondary text-sm",
-        pathname === props.href && "text-white"
+        "hover:bg-secondary focus-visible:bg-secondary text-sm flex items-center p-5 min-w-fit",
+        pathname === props.href && "text-amber-400 bg-secondary"
       )}
     />
   );
