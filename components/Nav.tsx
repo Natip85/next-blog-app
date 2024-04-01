@@ -5,6 +5,9 @@ import { usePathname } from "next/navigation";
 import { ComponentProps, ReactNode } from "react";
 
 export function Nav({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  if (pathname.startsWith("/auth")) return;
+
   return (
     <nav className="container max-w-6xl flex justify-between items-stretch">
       {children}
