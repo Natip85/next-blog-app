@@ -88,6 +88,7 @@ export const {
       });
     },
   },
+  secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
   ...authConfig,
