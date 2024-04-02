@@ -19,9 +19,15 @@ export default {
       async authorize(credentials) {
         console.log("CREDENTIALS>>>>", credentials);
         const validatedFields = LoginSchema.safeParse(credentials);
+        console.log("VAL>>", validatedFields);
+
         if (validatedFields.success) {
           const { email, password } = validatedFields.data;
+          console.log("HERE>>", email);
+
           const user = await db.user.findUnique({ where: { email } });
+          console.log("USER>>>", user);
+
           if (!user || !user.password) return null;
 
           const passwordsMatch = await bcryptjs.compare(

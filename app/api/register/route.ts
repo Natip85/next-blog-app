@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 import db from "@/db/db";
+import { generateVerificationToken } from "@/lib/tokens";
 
 export async function POST(request: Request) {
   try {
@@ -22,7 +23,7 @@ export async function POST(request: Request) {
       },
     });
 
-    //TODO: Generate verication token by email
+    const verificationToken = await generateVerificationToken(email);
     return NextResponse.json({
       message: "Confirmation email sent",
     });

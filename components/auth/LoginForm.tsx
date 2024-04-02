@@ -19,9 +19,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import FormError from "../FormError";
 import FormSuccess from "../FormSuccess";
 import axios from "axios";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const LoginForm = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const urlError =
     searchParams.get("error") === "OAuthAccountNotLinked"
@@ -40,25 +41,6 @@ const LoginForm = () => {
     },
   });
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-    // setError("");
-    // setSuccess("");
-    // startTransition(() => {
-    //   login(values)
-    //     .then((data) => {
-    //       if (data?.error) {
-    //         form.reset();
-    //         setError(data.error);
-    //       }
-    //       if (data?.success) {
-    //         form.reset();
-    //         setSuccess(data.success);
-    //       }
-    //       if (data?.twoFactor) {
-    //         setShowTwoFactor(true);
-    //       }
-    //     })
-    //     .catch(() => setError("Somethuing went wrong"));
-    // });
     setIsLoading(true);
     setError("");
     setSuccess("");

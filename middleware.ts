@@ -10,6 +10,8 @@ const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { nextUrl } = req;
+  console.log("REQAUTH>>", req.auth);
+  console.log("NEXTURL", nextUrl);
 
   const isLoggedIn = !!req.auth;
 
@@ -29,10 +31,16 @@ export default auth((req) => {
     }
     return null;
   }
+  console.log(
+    "NIOTLOGGEDIN>>",
+    !isLoggedIn,
+    "NOTPUBLIC ROUTE>>>",
+    !isPublicRoute
+  );
 
-  if (!isLoggedIn && !isPublicRoute) {
-    return Response.redirect(new URL("/auth/login", nextUrl));
-  }
+  // if (!isLoggedIn && !isPublicRoute) {
+  //   return Response.redirect(new URL("/auth/login", nextUrl));
+  // }
 
   return null;
 });
