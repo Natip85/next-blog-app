@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 import db from "@/db/db";
 import { generateVerificationToken } from "@/lib/tokens";
+import { sendVerificationEmail } from "@/lib/mail";
 
 export async function POST(request: Request) {
   try {
@@ -24,6 +25,10 @@ export async function POST(request: Request) {
     });
 
     const verificationToken = await generateVerificationToken(email);
+    await sendVerificationEmail(
+      verificationToken.email,
+      verificationToken.token
+    );
     return NextResponse.json({
       message: "Confirmation email sent",
     });

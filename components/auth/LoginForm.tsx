@@ -50,6 +50,7 @@ const LoginForm = () => {
         if (data.status === 200) {
           setSuccess(data.data.message);
           form.reset();
+          // router.push("/feed");
         }
       })
       .catch((res) => {

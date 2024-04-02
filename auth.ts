@@ -70,10 +70,8 @@ export const {
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
       return token;
     },
-    // async redirect({ url, baseUrl, }) {
-    //   console.log("URL>>>", url, "BASEURL>>>", baseUrl);
-
-    //   return baseUrl + "/feed";
+    // async redirect({ url, baseUrl }) {
+    //   return baseUrl;
     // },
   },
   pages: {

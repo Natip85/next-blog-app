@@ -1,5 +1,6 @@
 import { signIn } from "@/auth";
 import db from "@/db/db";
+import { sendVerificationEmail } from "@/lib/mail";
 import { generateVerificationToken } from "@/lib/tokens";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { AuthError } from "next-auth";
@@ -18,11 +19,11 @@ export async function POST(request: Request) {
     const verificationToken = await generateVerificationToken(
       existingUser.email
     );
-    //send email
-    // await sendVerificationEmail(
-    //   verificationToken.email,
-    //   verificationToken.token
-    // );
+
+    await sendVerificationEmail(
+      verificationToken.email,
+      verificationToken.token
+    );
     return NextResponse.json({
       message: "Confirmation email sent",
     });
