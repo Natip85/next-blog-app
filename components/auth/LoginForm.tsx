@@ -12,7 +12,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import AuthCardWrapper from "./AuthCardWrapper";
-import { useState } from "react";
+import { startTransition, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { LoginSchema } from "@/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +20,7 @@ import FormError from "../FormError";
 import FormSuccess from "../FormSuccess";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
+import { login } from "@/actions/login";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -28,7 +29,7 @@ const LoginForm = () => {
     searchParams.get("error") === "OAuthAccountNotLinked"
       ? "Email already in use with different account"
       : "";
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [showTwoFactor, setShowTwoFactor] = useState(false);
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
@@ -41,24 +42,29 @@ const LoginForm = () => {
     },
   });
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-    setIsLoading(true);
     setError("");
     setSuccess("");
-    axios
-      .post("/api/login", values)
-      .then((data) => {
-        if (data.status === 200) {
-          setSuccess(data.data.message);
-          form.reset();
-          router.refresh();
-        }
-      })
-      .catch((res) => {
-        setError(res.response.data);
-        setIsLoading(false);
-        form.reset();
-      })
-      .finally(() => setIsLoading(false));
+    startTransition(() => {
+      login(values)
+        .then((data) => {
+          console.log("DATAHERE>>>", data);
+
+          if (data?.error) {
+            form.reset();
+            setError(data.error);
+          }
+          if (data?.success) {
+            form.reset();
+            setSuccess(data.success);
+          }
+          //  if (data?.twoFactor) {
+          //    setShowTwoFactor(true);
+          //  }
+        })
+        .catch(() => {
+          setError("Somethuing went wrong");
+        });
+    });
   };
   return (
     <AuthCardWrapper
@@ -80,7 +86,7 @@ const LoginForm = () => {
                     <FormControl>
                       <Input
                         {...field}
-                        disabled={isLoading}
+                        disabled={isPending}
                         placeholder="123456"
                       />
                     </FormControl>
@@ -101,7 +107,7 @@ const LoginForm = () => {
                         <Input
                           autoComplete="user-email"
                           {...field}
-                          disabled={isLoading}
+                          disabled={isPending}
                           placeholder="john.doe@example.com"
                           type="email"
                         />
@@ -122,7 +128,7 @@ const LoginForm = () => {
                           {...field}
                           placeholder="******"
                           type="password"
-                          disabled={isLoading}
+                          disabled={isPending}
                         />
                       </FormControl>
                       <Button
@@ -142,7 +148,7 @@ const LoginForm = () => {
           </div>
           <FormError message={error || urlError} />
           <FormSuccess message={success} />
-          <Button disabled={isLoading} type="submit" className="w-full">
+          <Button disabled={isPending} type="submit" className="w-full">
             {showTwoFactor ? "Confirm" : "Login"}
           </Button>
         </form>

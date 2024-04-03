@@ -1,6 +1,6 @@
 "use client";
 import * as z from "zod";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -18,8 +18,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import FormError from "../FormError";
 import FormSuccess from "../FormSuccess";
+import { register } from "@/actions/register";
 const RegisterForm = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -31,21 +32,28 @@ const RegisterForm = () => {
     },
   });
   const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
-    setIsLoading(true);
+    // setError("");
+    // setSuccess("");
+    // axios
+    //   .post("/api/register", values)
+    //   .then((data) => {
+    //     if (data.status === 200) {
+    //       setSuccess(data.data.message);
+    //     }
+    //   })
+    //   .catch((res) => {
+    //     setError(res.response.data);
+    //     setIsLoading(false);
+    //   })
+    //   .finally(() => setIsLoading(false));
     setError("");
     setSuccess("");
-    axios
-      .post("/api/register", values)
-      .then((data) => {
-        if (data.status === 200) {
-          setSuccess(data.data.message);
-        }
-      })
-      .catch((res) => {
-        setError(res.response.data);
-        setIsLoading(false);
-      })
-      .finally(() => setIsLoading(false));
+    startTransition(() => {
+      register(values).then((data) => {
+        setError(data.error);
+        setSuccess(data.success);
+      });
+    });
   };
   return (
     <AuthCardWrapper
@@ -67,7 +75,7 @@ const RegisterForm = () => {
                     <Input
                       autoComplete="username"
                       {...field}
-                      disabled={isLoading}
+                      disabled={isPending}
                       placeholder="John Doe"
                       type="text"
                     />
@@ -86,7 +94,7 @@ const RegisterForm = () => {
                     <Input
                       autoComplete="user-email"
                       {...field}
-                      disabled={isLoading}
+                      disabled={isPending}
                       placeholder="john.doe@example.com"
                       type="email"
                     />
@@ -107,7 +115,7 @@ const RegisterForm = () => {
                       {...field}
                       placeholder="******"
                       type="password"
-                      disabled={isLoading}
+                      disabled={isPending}
                     />
                   </FormControl>
                   <FormMessage />
@@ -117,7 +125,7 @@ const RegisterForm = () => {
           </div>
           <FormError message={error} />
           <FormSuccess message={success} />
-          <Button disabled={isLoading} type="submit" className="w-full">
+          <Button disabled={isPending} type="submit" className="w-full">
             Create account
           </Button>
         </form>
