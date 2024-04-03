@@ -14,6 +14,7 @@ export default function AdminLayout({
         <NavLink href={"/server"}>Server</NavLink>
         <NavLink href={"/client"}>Client</NavLink>
         <NavLink href={"/admin"}>Admin</NavLink>
+        <NavLink href={"/dashboard"}>Dashboard</NavLink>
         <UserButton />
       </Nav>
       {children}

@@ -25,7 +25,7 @@ const UserButton = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <LogoutButton>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="hover:cursor-pointer">
             <LogOut className="size-4 mr-2" />
             Logout
           </DropdownMenuItem>

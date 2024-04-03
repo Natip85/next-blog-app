@@ -12,13 +12,5 @@ export default function FeedPage() {
     // signOut();
     logout();
   };
-  return (
-    <div>
-      <form>
-        <button onClick={onClick} type="submit">
-          Sign out
-        </button>
-      </form>
-    </div>
-  );
+  return <div>feed page</div>;
 }
