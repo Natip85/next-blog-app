@@ -97,29 +97,9 @@ export const authConfig = {
       return true;
     },
     async session({ token, session }) {
-      const existingUser = await db.user.findUnique({
-        where: { id: token.sub },
-      });
-      console.log("USER???", existingUser);
-
-      console.log("SESSION1", session.user);
-      console.log("TOKEN>>", token);
-
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
-      if (token.sub) {
-        session.user = {
-          id: token.sub,
-          role: token.role as UserRole,
-          isTwoFactorEnabled: token.isTwoFactorEnabled as boolean,
-          name: token.name,
-          email: token.email as string,
-          isOAuth: token.isOAuth as boolean,
-          emailVerified: new Date(),
-        };
-      }
-      console.log("SESSION2", session.user);
 
       if (token.role && session.user) {
         session.user.role = token.role as UserRole;
