@@ -5,9 +5,9 @@ import { signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { AuthError } from "next-auth";
 import { LoginSchema } from "@/validations";
-import db from "@/db/db";
 import { generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/mail";
+import { getUserByEmail } from "@/data/user";
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
   const validatedFields = LoginSchema.safeParse(values);
@@ -17,7 +17,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
   }
 
   const { email, password, code } = validatedFields.data;
-  const existingUser = await db.user.findUnique({ where: { email } });
+  const existingUser = await getUserByEmail(email);
 
   if (!existingUser || !existingUser.email || !existingUser.password) {
     return { error: "Email does not exist" };

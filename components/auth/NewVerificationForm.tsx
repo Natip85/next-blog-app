@@ -11,17 +11,15 @@ const NewVerificationForm = () => {
   const [success, setSuccess] = useState<string | undefined>();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-  console.log({ error, success });
 
   const onSubmit = useCallback(() => {
+    if (success || error) return;
     if (!token) {
       setError("Missing token");
       return;
     }
     newVerification(token)
       .then((data) => {
-        console.log("DATA>>", data.error);
-
         if (data.error !== undefined) {
           setError(data.error);
         } else {
@@ -45,8 +43,9 @@ const NewVerificationForm = () => {
     >
       <div className="flex items-center w-full justify-center">
         {!success && !error && <BeatLoader />}
-        {success && <FormSuccess message={success} />}
-        {error && <FormError message={success} />}
+
+        <FormSuccess message={success} />
+        {!success && <FormError message={success} />}
       </div>
     </AuthCardWrapper>
   );

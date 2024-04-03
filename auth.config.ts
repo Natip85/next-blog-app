@@ -11,11 +11,15 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { LoginSchema } from "./validations";
 import bcryptjs from "bcryptjs";
+import { getUserByEmail, getUserById } from "./data/user";
+import { getAccountByUserId } from "./data/account";
+import { getTwoFactorConfirmationByUserId } from "./data/twoFactorConfirmation";
 
 export const authConfig = {
+  secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/auth/login",
-    error: "/auth/login",
+    error: "/auth/error",
   },
   providers: [
     Google({
@@ -24,16 +28,12 @@ export const authConfig = {
     }),
     Credentials({
       async authorize(credentials) {
-        console.log("CREDENTIALS>>>>", credentials);
         const validatedFields = LoginSchema.safeParse(credentials);
-        console.log("VAL>>", validatedFields);
 
         if (validatedFields.success) {
           const { email, password } = validatedFields.data;
-          console.log("HERE>>", email);
 
-          const user = await db.user.findUnique({ where: { email } });
-          console.log("USER>>>", user);
+          const user = await getUserByEmail(email);
 
           if (!user || !user.password) return null;
 
@@ -47,8 +47,6 @@ export const authConfig = {
       },
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET,
-
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
@@ -58,7 +56,6 @@ export const authConfig = {
       if (isApiAuthRoute) {
         return true;
       }
-
       if (isAuthRoute) {
         if (isLoggedIn) {
           return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
@@ -72,20 +69,15 @@ export const authConfig = {
     },
     async signIn({ user, account }) {
       //allow oauth without email verif
-      console.log("USER>", user, "ACC>>", account);
-
       if (account?.provider !== "credentials") return true;
-      const existingUser = await db.user.findUnique({
-        where: { id: user.id },
-      });
-      //Prevent sign in witout email verif
+      const existingUser = await getUserById(user.id);
+
+      //Prevent sign in witout email verification
       if (!existingUser?.emailVerified) return false;
       //add 2FA check
       if (existingUser.isTwoFactorEnabled) {
-        const twoFactorConfirmation = await db.twoFactorConfirmation.findUnique(
-          {
-            where: { userId: existingUser.id },
-          }
+        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
+          existingUser.id
         );
         if (!twoFactorConfirmation) return false;
 
@@ -115,28 +107,19 @@ export const authConfig = {
 
       return session;
     },
-    // async jwt({ token }) {
-    //   if (!token.sub) return token;
-    //   const existingUser = await db.user.findUnique({
-    //     where: { id: token.sub },
-    //   });
-
-    //   if (!existingUser) return token;
-    //   const existingAccount = await db.account.findFirst({
-    //     where: { userId: existingUser.id },
-    //   });
-    //   token.isOAuth = !!existingAccount;
-    //   token.name = existingUser.name;
-    //   token.email = existingUser.email;
-    //   token.role = existingUser.role;
-    //   token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
-    //   return token;
-    // },
-    // async redirect({ url, baseUrl }) {
-    //   return baseUrl;
-    // },
+    async jwt({ token }) {
+      if (!token.sub) return token;
+      const existingUser = await getUserById(token.sub);
+      if (!existingUser) return token;
+      const existingAccount = await getAccountByUserId(existingUser.id);
+      token.isOAuth = !!existingAccount;
+      token.name = existingUser.name;
+      token.email = existingUser.email;
+      token.role = existingUser.role;
+      token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
+      return token;
+    },
   },
-
   events: {
     async linkAccount({ user }) {
       await db.user.update({

@@ -47,8 +47,6 @@ const LoginForm = () => {
     startTransition(() => {
       login(values)
         .then((data) => {
-          console.log("DATAHERE>>>", data);
-
           if (data?.error) {
             form.reset();
             setError(data.error);

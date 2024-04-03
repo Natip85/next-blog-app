@@ -14,7 +14,6 @@ const LoginButton = ({
 }: LoginButtonProps) => {
   const router = useRouter();
   const onClick = () => {
-    console.log("LOGIN BUTN CLIKED");
     router.push("/auth/login");
   };
 
