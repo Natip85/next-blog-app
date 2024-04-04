@@ -140,37 +140,6 @@ const ProfilePage = () => {
                       </FormItem>
                     )}
                   />
-                  {/* <div
-                    onClick={handleOpenDialog}
-                    className="flex items-center justify-between hover:cursor-pointer"
-                  >
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium">
-                        Profile information
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        Edit your photo, name, bio, etc.
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span>{user?.name}</span>
-                      <span className="relative aspect-video">
-                        {user?.image ? (
-                          <Image
-                            src={user?.image || ""}
-                            alt="user profile picture"
-                            width={30}
-                            height={30}
-                            className="object-cover rounded-full"
-                          />
-                        ) : (
-                          <div className="bg-amber-400 rounded-full size-8 flex justify-center items-center">
-                            <User2 className="rounded-full" />
-                          </div>
-                        )}
-                      </span>
-                    </div>
-                  </div> */}
                   <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger className="w-full">
                       <div className="flex items-center justify-between">
@@ -339,7 +308,7 @@ const ProfilePage = () => {
             </div>
           )}
         </span>
-        <h3 className="font-semibold mt-5">{user.name}</h3>
+        <h3 className="font-semibold mt-5">{user?.name}</h3>
       </div>
     </div>
   );
