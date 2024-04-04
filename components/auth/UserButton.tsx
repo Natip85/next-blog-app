@@ -10,6 +10,7 @@ import {
 } from "../ui/dropdown-menu";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import LogoutButton from "./LogoutButton";
+import Link from "next/link";
 
 const UserButton = () => {
   const user = useCurrentUser();
@@ -23,13 +24,18 @@ const UserButton = () => {
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent align="end">
         <LogoutButton>
           <DropdownMenuItem className="hover:cursor-pointer">
             <LogOut className="size-4 mr-2" />
             Logout
           </DropdownMenuItem>
         </LogoutButton>
+        <DropdownMenuItem className="gap-2 hover:cursor-pointer" asChild>
+          <Link href={"/profile"}>
+            <User2 className="size-4" /> Profile
+          </Link>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

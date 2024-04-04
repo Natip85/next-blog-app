@@ -6,9 +6,9 @@ import { sendVerificationEmail } from "@/lib/mail";
 import { generateVerificationToken } from "@/lib/tokens";
 import * as z from "zod";
 import bcryptjs from "bcryptjs";
-import { DashboardSchema } from "@/validations";
+import { ProfileSchema } from "@/validations";
 import db from "@/db/db";
-export const dashboard = async (values: z.infer<typeof DashboardSchema>) => {
+export const profile = async (values: z.infer<typeof ProfileSchema>) => {
   const user = await currentUser();
 
   if (!user) {
