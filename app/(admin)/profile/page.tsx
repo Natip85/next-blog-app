@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ProfileSchema } from "@/validations";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,11 +31,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import Image from "next/image";
+import { User2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 const ProfilePage = () => {
   const user = useCurrentUser();
   const { update } = useSession();
   const [isPending, startTransition] = useTransition();
-
+  const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
@@ -62,10 +71,16 @@ const ProfilePage = () => {
         .catch(() => toast.error("Something went wrong"));
     });
   };
+
+  const handleOpenDialog = () => {
+    setOpen(!open);
+  };
   return (
     <div className="container max-w-7xl flex justify-between gap-10">
-      <div className="w-2/3 p-5">
-        <h1 className="text-5xl font-semibold my-10">{user?.name}</h1>
+      <div className="w-full sm:w-2/3 p-5">
+        <h1 className="text-3xl sm:text-5xl font-semibold my-10">
+          {user?.name}
+        </h1>
         <Form {...form}>
           <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
             <Tabs defaultValue="about">
@@ -125,7 +140,10 @@ const ProfilePage = () => {
                       </FormItem>
                     )}
                   />
-                  <div className="flex items-center justify-between">
+                  {/* <div
+                    onClick={handleOpenDialog}
+                    className="flex items-center justify-between hover:cursor-pointer"
+                  >
                     <div className="flex flex-col">
                       <span className="text-sm font-medium">
                         Profile information
@@ -137,16 +155,64 @@ const ProfilePage = () => {
                     <div className="flex items-center gap-3">
                       <span>{user?.name}</span>
                       <span className="relative aspect-video">
-                        <Image
-                          src={user?.image || ""}
-                          alt="user profile picture"
-                          width={30}
-                          height={30}
-                          className="object-cover rounded-full"
-                        />
+                        {user?.image ? (
+                          <Image
+                            src={user?.image || ""}
+                            alt="user profile picture"
+                            width={30}
+                            height={30}
+                            className="object-cover rounded-full"
+                          />
+                        ) : (
+                          <div className="bg-amber-400 rounded-full size-8 flex justify-center items-center">
+                            <User2 className="rounded-full" />
+                          </div>
+                        )}
                       </span>
                     </div>
-                  </div>
+                  </div> */}
+                  <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogTrigger className="w-full">
+                      <div className="flex items-center justify-between">
+                        <div className="flex flex-col items-start">
+                          <span className="text-sm font-medium">
+                            Profile information
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            Edit your photo, name, bio, etc.
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span>{user?.name}</span>
+                          <span className="relative aspect-video">
+                            {user?.image ? (
+                              <Image
+                                src={user?.image || ""}
+                                alt="user profile picture"
+                                width={30}
+                                height={30}
+                                className="object-cover rounded-full"
+                              />
+                            ) : (
+                              <div className="bg-amber-400 rounded-full size-8 flex justify-center items-center">
+                                <User2 className="rounded-full" />
+                              </div>
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Are you absolutely sure?</DialogTitle>
+                        <DialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete your account and remove your data from our
+                          servers.
+                        </DialogDescription>
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
                 </div>
                 <Separator className="mt-5" />
                 <div className="flex justify-end my-5">
@@ -257,7 +323,24 @@ const ProfilePage = () => {
           </form>
         </Form>
       </div>
-      <div className="h-screen flex-1 border-l">second part</div>
+      <div className="hidden sm:flex flex-col h-screen flex-1 border-l p-5">
+        <span>
+          {user?.image ? (
+            <Image
+              src={user?.image || ""}
+              alt="user profile picture"
+              width={100}
+              height={100}
+              className="object-cover rounded-full"
+            />
+          ) : (
+            <div className="bg-amber-400 rounded-full size-24 flex justify-center items-center">
+              <User2 className="rounded-full" size={75} />
+            </div>
+          )}
+        </span>
+        <h3 className="font-semibold mt-5">{user.name}</h3>
+      </div>
     </div>
   );
 };
