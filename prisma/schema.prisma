@@ -22,10 +22,11 @@ model User {
   id                    String @id @default(auto()) @map("_id") @db.ObjectId
   name                  String
   email                 String @unique
+  bio                   String?
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
   emailVerified         DateTime?
-  image                 String?
+  image                 Image?
   password              String?
   role                  UserRole @default(USER)
   isTwoFactorEnabled    Boolean @default(false)
@@ -144,3 +145,14 @@ model Follow {
   followedBy  User      @relation("UserFollowers", fields: [followedById], references: [id])
 }
 
+type Image {
+  key              String
+  name             String
+  url              String
+  size             Int
+  serverData       ServerData
+}
+
+type ServerData {
+  uploadedBy String    
+}
