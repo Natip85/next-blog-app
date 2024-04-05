@@ -33,18 +33,25 @@ import { toast } from "sonner";
 import { User2 } from "lucide-react";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ProfileEditForm from "@/components/auth/ProfileEditForm";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { logout } from "@/actions/logout";
 
 const ProfilePage = () => {
   const user = useCurrentUser();
+  const router = useRouter();
   const { update } = useSession();
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
@@ -74,6 +81,16 @@ const ProfilePage = () => {
 
   const handleOpenDialog = () => {
     setOpen(!open);
+  };
+
+  const handleDeleteAccount = async (id: string) => {
+    await axios.delete(`/api/auth/delete/${id}`).then((res) => {
+      console.log(res);
+      if (res.status === 200) {
+        setOpenDelete(!openDelete);
+        logout();
+      }
+    });
   };
   return (
     <div className="container max-w-7xl flex justify-between gap-10">
@@ -124,6 +141,49 @@ const ProfilePage = () => {
                         Profile information
                       </DialogTitle>
                       <ProfileEditForm closeDialog={handleOpenDialog} />
+                    </DialogContent>
+                  </Dialog>
+                  <Dialog open={openDelete} onOpenChange={setOpenDelete}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={"link"}
+                        className="text-destructive p-0 flex flex-col items-start font-medium hover:no-underline"
+                      >
+                        Delete account
+                        <span className="text-xs text-muted-foreground">
+                          Permanently delete your account and all of your
+                          content.
+                        </span>
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle className="text-center text-2xl">
+                          Delete account
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="text-sm p-2">
+                        We’re sorry to see you go. Once your account is deleted,
+                        all of your content will be permanently gone, including
+                        your profile, stories, publications, notes, and
+                        responses. Deleting your Medium account will not delete
+                        any Stripe account you have connected to your Medium
+                        account. If you’re not sure about that, we suggest you
+                        deactivate or submit a request at help.medium.com
+                        instead.
+                      </div>
+                      <Separator />
+                      <div className="flex justify-end gap-5">
+                        <DialogClose className="text-sm text-destructive rounded-3xl border border-destructive hover:text-red-700 hover:border-red-700 hover:bg-transparent px-3">
+                          Cancel
+                        </DialogClose>
+                        <Button
+                          onClick={() => handleDeleteAccount(user?.id!)}
+                          className="bg-destructive text-white rounded-3xl hover:bg-red-700"
+                        >
+                          Delete account
+                        </Button>
+                      </div>
                     </DialogContent>
                   </Dialog>
                 </div>
