@@ -26,7 +26,7 @@ model User {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
   emailVerified         DateTime?
-  image                 Image?
+  image                 String?
   password              String?
   role                  UserRole @default(USER)
   isTwoFactorEnabled    Boolean @default(false)
@@ -145,14 +145,4 @@ model Follow {
   followedBy  User      @relation("UserFollowers", fields: [followedById], references: [id])
 }
 
-type Image {
-  key              String
-  name             String
-  url              String
-  size             Int
-  serverData       ServerData
-}
 
-type ServerData {
-  uploadedBy String    
-}

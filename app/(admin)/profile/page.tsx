@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Image as UserImage, UserRole } from "@prisma/client";
+import { UserRole } from "@prisma/client";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
@@ -38,14 +38,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { UploadButton } from "@/components/uploadthing";
 import ProfileEditForm from "@/components/auth/ProfileEditForm";
+
 const ProfilePage = () => {
   const user = useCurrentUser();
   const { update } = useSession();
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
-  const [images, setImages] = useState<UserImage[]>();
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
@@ -176,34 +175,7 @@ const ProfilePage = () => {
                       <DialogTitle className="text-center">
                         Profile information
                       </DialogTitle>
-
-                      <UploadButton
-                        endpoint="imageUploader"
-                        appearance={{
-                          button:
-                            "bg-gray-50 text-black border-2 border-gray-200 shadow-md rounded-xl hover:bg-stone-100",
-                          allowedContent: "hidden",
-                        }}
-                        onClientUploadComplete={(res) => {
-                          console.log(res);
-
-                          setImages((prevImages) => {
-                            if (prevImages && prevImages.length > 0) {
-                              return [...prevImages, ...res];
-                            } else {
-                              return res;
-                            }
-                          });
-                          toast("Upload complete");
-                        }}
-                        onUploadError={(error: Error) => {
-                          // toast({
-                          //   variant: "destructive",
-                          //   description: `ERROR! ${error.message}`,
-                          // });
-                        }}
-                      />
-                      <ProfileEditForm />
+                      <ProfileEditForm closeDialog={handleOpenDialog} />
                     </DialogContent>
                   </Dialog>
                 </div>
