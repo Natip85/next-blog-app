@@ -19,6 +19,8 @@ import { useState, useTransition } from "react";
 import { Button } from "../ui/button";
 import { UploadButton } from "@/components/uploadthing";
 import { toast } from "sonner";
+import { profile } from "@/actions/profile";
+import { useSession } from "next-auth/react";
 
 export type UserImage = {
   key: string;
@@ -36,7 +38,7 @@ interface ProfileEditFormProps {
 }
 const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
   const user = useCurrentUser();
-
+  const { update } = useSession();
   const [isPending, startTransition] = useTransition();
   const [images, setImages] = useState<UserImage[]>([
     {
@@ -62,10 +64,23 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
     },
   });
   const onSubmit = (values: z.infer<typeof ProfileSchema>) => {
-    console.log({ values });
-
+    const finalData = {
+      ...values,
+      image: images[0].url,
+    };
     startTransition(() => {
-      console.log("statrted transition");
+      profile(finalData)
+        .then((data) => {
+          if (data.error) {
+            toast.error(data.error);
+          }
+          if (data.success) {
+            update();
+            toast.success(data.success);
+            closeDialog();
+          }
+        })
+        .catch(() => toast.error("Something went wrong"));
     });
   };
   return (
@@ -75,7 +90,7 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
         <div className="flex items-center gap-5 mt-2">
           <div>
             <span className="relative aspect-video">
-              {user?.image ? (
+              {images[0].url ? (
                 <Image
                   src={images[0].url || ""}
                   alt="user profile picture"
@@ -114,7 +129,7 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
                     //   }
                     // });
                     setImages(res);
-                    toast("Upload complete");
+                    toast("Profile image upload complete");
                   }}
                   onUploadError={(error: Error) => {
                     closeDialog();
@@ -128,7 +143,7 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
                     {
                       key: "",
                       name: "",
-                      url: user?.image || "",
+                      url: "",
                       size: 0,
                       serverData: { uploadedBy: "" },
                     },
@@ -204,6 +219,7 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
             <Button
               type="button"
               onClick={form.handleSubmit(onSubmit)}
+              disabled={isPending}
               className="rounded-3xl"
             >
               Save
