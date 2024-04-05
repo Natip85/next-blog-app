@@ -2,7 +2,6 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { ProfileSchema } from "@/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { User2 } from "lucide-react";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import {
@@ -50,6 +49,7 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
       serverData: { uploadedBy: "" },
     },
   ]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
@@ -63,10 +63,11 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
       bio: user?.bio || undefined,
     },
   });
+
   const onSubmit = (values: z.infer<typeof ProfileSchema>) => {
     const finalData = {
       ...values,
-      image: images[0].url,
+      image: images ? images[0]?.url : undefined,
     };
     startTransition(() => {
       profile(finalData)
@@ -90,17 +91,19 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
         <div className="flex items-center gap-5 mt-2">
           <div>
             <span className="relative aspect-video">
-              {images[0].url ? (
+              {images ? (
                 <Avatar className="size-28">
-                  <AvatarImage src={user?.image || ""} />
+                  <AvatarImage src={images[0].url || ""} />
                   <AvatarFallback className="bg-amber-500">
                     <User2 className="text-white" />
                   </AvatarFallback>
                 </Avatar>
               ) : (
-                <div className="bg-amber-400 rounded-full size-20 flex justify-center items-center">
-                  <User2 className="rounded-full" />
-                </div>
+                <Avatar className="size-28">
+                  <AvatarFallback className="bg-amber-500">
+                    <User2 className="text-white" />
+                  </AvatarFallback>
+                </Avatar>
               )}
             </span>
           </div>
@@ -121,7 +124,11 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
                   }}
                   onClientUploadComplete={(res) => {
                     setImages(res);
+                    setIsLoading(false);
                     toast("Profile image upload complete");
+                  }}
+                  onUploadProgress={() => {
+                    setIsLoading(true);
                   }}
                   onUploadError={(error: Error) => {
                     closeDialog();
@@ -211,7 +218,7 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
             <Button
               type="button"
               onClick={form.handleSubmit(onSubmit)}
-              disabled={isPending}
+              disabled={isPending || isLoading}
               className="rounded-3xl"
             >
               Save

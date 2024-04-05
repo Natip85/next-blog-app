@@ -30,7 +30,6 @@ import { useSession } from "next-auth/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import Image from "next/image";
 import { User2 } from "lucide-react";
 import {
   Dialog,
@@ -110,18 +109,12 @@ const ProfilePage = () => {
                         <div className="flex items-center gap-3">
                           <span className="text-sm">{user?.name}</span>
                           <span className="relative aspect-video">
-                            {user?.image ? (
-                              <Avatar className="size-7">
-                                <AvatarImage src={user?.image || ""} />
-                                <AvatarFallback className="bg-amber-500">
-                                  <User2 className="text-white" />
-                                </AvatarFallback>
-                              </Avatar>
-                            ) : (
-                              <div className="bg-amber-400 rounded-full size-8 flex justify-center items-center">
-                                <User2 className="rounded-full" />
-                              </div>
-                            )}
+                            <Avatar className="size-7">
+                              <AvatarImage src={user?.image} />
+                              <AvatarFallback className="bg-amber-500">
+                                <User2 className="text-white" />
+                              </AvatarFallback>
+                            </Avatar>
                           </span>
                         </div>
                       </div>
@@ -137,7 +130,7 @@ const ProfilePage = () => {
               </TabsContent>
               <TabsContent value="security">
                 {user?.isOAuth === false && (
-                  <div>
+                  <div className="space-y-4">
                     <FormField
                       control={form.control}
                       name="email"
@@ -204,7 +197,7 @@ const ProfilePage = () => {
                         control={form.control}
                         name="isTwoFactorEnabled"
                         render={({ field }) => (
-                          <FormItem className="flex w-1/2 items-center justify-between rounded-md border p-3 gap-3 shadow-sm">
+                          <FormItem className="flex w-1/2 min-w-[175px] items-center justify-between rounded-md border p-3 gap-3 shadow-sm">
                             <FormDescription className="text-xs">
                               Enable two factor authentication for your account
                             </FormDescription>
@@ -222,6 +215,15 @@ const ProfilePage = () => {
                     </div>
                   </div>
                 )}
+                {user?.isOAuth === true && (
+                  <div className="flex flex-row items-center justify-between my-4">
+                    <p className="text-sm font-medium">Email</p>
+                    <p className="truncate text-xs max-w-[180px] p-2 bg-slate-100 rounded-md">
+                      {user?.email}
+                    </p>
+                  </div>
+                )}
+
                 <FormField
                   control={form.control}
                   name="role"
