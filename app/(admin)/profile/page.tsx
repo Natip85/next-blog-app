@@ -42,7 +42,6 @@ import ProfileEditForm from "@/components/auth/ProfileEditForm";
 
 const ProfilePage = () => {
   const user = useCurrentUser();
-
   const { update } = useSession();
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
@@ -96,51 +95,6 @@ const ProfilePage = () => {
               </TabsContent>
               <TabsContent value="account">
                 <div className="space-y-4 px-4">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem className="flex justify-between items-center">
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="John Doe"
-                            disabled={isPending}
-                            className="w-1/2 border-none focus-visible:ring-1 focus-visible:ring-offset-0 bg-gray-50"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="role"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center justify-between">
-                        <FormLabel>Role</FormLabel>
-                        <Select
-                          disabled={isPending}
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="w-1/2 ring-offset-0 focus:outline-none focus:ring-0  focus:ring-offset-0">
-                              <SelectValue placeholder="Select a role" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value={UserRole.ADMIN}>
-                              Admin
-                            </SelectItem>
-                            <SelectItem value={UserRole.USER}>User</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                   <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger className="w-full">
                       <div className="flex items-center justify-between">
@@ -153,7 +107,7 @@ const ProfilePage = () => {
                           </span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span>{user?.name}</span>
+                          <span className="text-sm">{user?.name}</span>
                           <span className="relative aspect-video">
                             {user?.image ? (
                               <Image
@@ -202,6 +156,7 @@ const ProfilePage = () => {
                           <FormLabel>Email</FormLabel>
                           <FormControl>
                             <Input
+                              autoComplete="user-email"
                               {...field}
                               placeholder="john.doe@example.com"
                               disabled={isPending}
@@ -221,6 +176,7 @@ const ProfilePage = () => {
                           <FormLabel>Current password</FormLabel>
                           <FormControl>
                             <Input
+                              autoComplete="user-password"
                               {...field}
                               placeholder="******"
                               disabled={isPending}
@@ -240,6 +196,7 @@ const ProfilePage = () => {
                           <FormLabel>New password</FormLabel>
                           <FormControl>
                             <Input
+                              autoComplete="user-new-password"
                               {...field}
                               placeholder="******"
                               disabled={isPending}
@@ -275,6 +232,31 @@ const ProfilePage = () => {
                     </div>
                   </div>
                 )}
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center justify-between">
+                      <FormLabel>Role</FormLabel>
+                      <Select
+                        disabled={isPending}
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-1/2 ring-offset-0 focus:outline-none focus:ring-0  focus:ring-offset-0">
+                            <SelectValue placeholder="Select a role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value={UserRole.ADMIN}>Admin</SelectItem>
+                          <SelectItem value={UserRole.USER}>User</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <div className="flex justify-end my-5">
                   <Button
                     variant={"outline"}
@@ -297,6 +279,7 @@ const ProfilePage = () => {
               alt="user profile picture"
               width={100}
               height={100}
+              priority
               className="object-cover rounded-full"
             />
           ) : (
@@ -305,7 +288,24 @@ const ProfilePage = () => {
             </div>
           )}
         </span>
-        <h3 className="font-semibold mt-5">{user?.name}</h3>
+        <h3 className="font-semibold my-5">{user?.name}</h3>
+        <p className="text-sm text-muted-foreground">{user.bio}</p>
+        <div>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger
+              className="w-fit p-0 hover:bg-transparent text-green-600 hover:text-gray-900"
+              asChild
+            >
+              <Button variant={"ghost"}>Edit profile</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogTitle className="text-center">
+                Profile information
+              </DialogTitle>
+              <ProfileEditForm closeDialog={handleOpenDialog} />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
     </div>
   );

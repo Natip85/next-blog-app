@@ -91,10 +91,10 @@ export const authConfig = {
     async session({ token, session }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
-      }
-      if (session.user) {
         session.user.bio = token.bio as string;
+        session.user.image = token.image as string;
       }
+
       if (token.role && session.user) {
         session.user.role = token.role as UserRole;
       }
@@ -119,6 +119,7 @@ export const authConfig = {
       token.email = existingUser.email;
       token.role = existingUser.role;
       token.bio = existingUser.bio;
+      token.image = existingUser.image;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
       return token;
     },

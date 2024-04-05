@@ -49,7 +49,6 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
       serverData: { uploadedBy: "" },
     },
   ]);
-  console.log("Images>>>", images);
 
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
@@ -121,13 +120,6 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
                     allowedContent: "hidden",
                   }}
                   onClientUploadComplete={(res) => {
-                    // setImages((prevImages) => {
-                    //   if (prevImages && prevImages.length > 0) {
-                    //     return [...prevImages, ...res];
-                    //   } else {
-                    //     return res;
-                    //   }
-                    // });
                     setImages(res);
                     toast("Profile image upload complete");
                   }}
@@ -175,7 +167,7 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
                       {...field}
                       placeholder="John Doe"
                       disabled={isPending}
-                      className="w-full rounded-none bg-transparent border-t-0 border-r-0 border-l-0 border-b-[1.5px] border-black focus-visible:ring-0"
+                      className="w-full rounded-none bg-transparent border-t-0 border-r-0 border-l-0 border-b-[1.5px] border-black focus-visible:ring-0 focus-visible:ring-offset-0"
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
@@ -196,7 +188,7 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
                     <Input
                       {...field}
                       disabled={isPending}
-                      className="w-full rounded-none bg-transparent border-t-0 border-r-0 border-l-0 border-b-[1.5px] border-black focus-visible:ring-0"
+                      className="w-full rounded-none bg-transparent border-t-0 border-r-0 border-l-0 border-b-[1.5px] border-black focus-visible:ring-0 focus-visible:ring-offset-0"
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
