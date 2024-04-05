@@ -42,6 +42,8 @@ import ProfileEditForm from "@/components/auth/ProfileEditForm";
 
 const ProfilePage = () => {
   const user = useCurrentUser();
+  console.log({ user });
+
   const { update } = useSession();
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
