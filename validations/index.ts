@@ -26,7 +26,7 @@ export const NewPasswordSchema = z.object({
 export const ProfileSchema = z
   .object({
     name: z.optional(z.string()),
-    bio: z.optional(z.string()),
+    bio: z.optional(z.string().max(160)),
     isTwoFactorEnabled: z.optional(z.boolean()),
     role: z.enum([UserRole.ADMIN, UserRole.USER]),
     email: z.optional(z.string().email()),

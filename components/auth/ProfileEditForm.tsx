@@ -38,7 +38,16 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
   const user = useCurrentUser();
 
   const [isPending, startTransition] = useTransition();
-  const [images, setImages] = useState<UserImage[]>();
+  const [images, setImages] = useState<UserImage[]>([
+    {
+      key: "",
+      name: "",
+      url: user?.image || "",
+      size: 0,
+      serverData: { uploadedBy: "" },
+    },
+  ]);
+  console.log("Images>>>", images);
 
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
@@ -68,7 +77,7 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
             <span className="relative aspect-video">
               {user?.image ? (
                 <Image
-                  src={user?.image || ""}
+                  src={images[0].url || ""}
                   alt="user profile picture"
                   width={100}
                   height={100}
@@ -81,23 +90,30 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
               )}
             </span>
           </div>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 p-1">
             <div className="flex items-center gap-3">
               <span className="text-sm">
                 <UploadButton
+                  className="ut-button:bg-transparent ut-button:h-[30px] ut-button:w-[75px] ut-button:text-green-600"
                   endpoint="imageUploader"
+                  content={{
+                    button({ ready }) {
+                      if (ready) return "Update";
+                      return "Getting ready...";
+                    },
+                  }}
                   appearance={{
-                    button: "bg-transparent text-green-600",
                     allowedContent: "hidden",
                   }}
                   onClientUploadComplete={(res) => {
-                    setImages((prevImages) => {
-                      if (prevImages && prevImages.length > 0) {
-                        return [...prevImages, ...res];
-                      } else {
-                        return res;
-                      }
-                    });
+                    // setImages((prevImages) => {
+                    //   if (prevImages && prevImages.length > 0) {
+                    //     return [...prevImages, ...res];
+                    //   } else {
+                    //     return res;
+                    //   }
+                    // });
+                    setImages(res);
                     toast("Upload complete");
                   }}
                   onUploadError={(error: Error) => {
@@ -106,9 +122,24 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
                   }}
                 />
               </span>
-              <span className="text-sm text-destructive">Remove</span>
+              <span
+                onClick={() =>
+                  setImages([
+                    {
+                      key: "",
+                      name: "",
+                      url: user?.image || "",
+                      size: 0,
+                      serverData: { uploadedBy: "" },
+                    },
+                  ])
+                }
+                className="text-sm text-destructive hover:cursor-pointer"
+              >
+                Remove
+              </span>
             </div>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-xs text-muted-foreground">
               Recommended: Square JPG, PNG, or GIF, at least 1,000 pixels per
               side.
             </div>
@@ -170,7 +201,11 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
             >
               Cancel
             </Button>
-            <Button onClick={() => onSubmit} className="rounded-3xl">
+            <Button
+              type="button"
+              onClick={form.handleSubmit(onSubmit)}
+              className="rounded-3xl"
+            >
               Save
             </Button>
           </div>

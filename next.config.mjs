@@ -4,13 +4,19 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "c4.wallpaperflare.com",
+        hostname: "lh3.googleusercontent.com",
         port: "",
         pathname: "/**",
       },
       {
         protocol: "https",
-        hostname: "lh3.googleusercontent.com",
+        hostname: "utfs.io",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "c4.wallpaperflare.com",
         port: "",
         pathname: "/**",
       },
