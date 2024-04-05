@@ -289,7 +289,7 @@ const ProfilePage = () => {
           )}
         </span>
         <h3 className="font-semibold my-5">{user?.name}</h3>
-        <p className="text-sm text-muted-foreground">{user.bio}</p>
+        <p className="text-sm text-muted-foreground">{user?.bio}</p>
         <div>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger
