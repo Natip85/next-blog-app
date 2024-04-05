@@ -199,7 +199,7 @@ const ProfilePage = () => {
                           <FormLabel>Email</FormLabel>
                           <FormControl>
                             <Input
-                              autoComplete="user-email"
+                              autoComplete="update-user-email"
                               {...field}
                               placeholder="john.doe@example.com"
                               disabled={isPending}
@@ -219,7 +219,7 @@ const ProfilePage = () => {
                           <FormLabel>Current password</FormLabel>
                           <FormControl>
                             <Input
-                              autoComplete="user-password"
+                              autoComplete="update-user-password"
                               {...field}
                               placeholder="******"
                               disabled={isPending}
@@ -239,7 +239,7 @@ const ProfilePage = () => {
                           <FormLabel>New password</FormLabel>
                           <FormControl>
                             <Input
-                              autoComplete="user-new-password"
+                              autoComplete="update-user-new-password"
                               {...field}
                               placeholder="******"
                               disabled={isPending}
