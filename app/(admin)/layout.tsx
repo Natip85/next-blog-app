@@ -31,8 +31,10 @@ export default function AdminLayout({
           </div>
         </div>
         <div className="flex items-center gap-5">
-          <span className="flex items-center gap-2 text-sm">
-            <Edit className="size-5" strokeWidth={1} /> Write
+          <span>
+            <Link href={"/write"} className="flex items-center gap-2 text-sm">
+              <Edit className="size-5" strokeWidth={1} /> Write
+            </Link>
           </span>
           <span>
             <Bell className="size-5" strokeWidth={1} />
