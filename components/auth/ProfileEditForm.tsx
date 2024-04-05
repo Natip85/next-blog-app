@@ -21,6 +21,7 @@ import { UploadButton } from "@/components/uploadthing";
 import { toast } from "sonner";
 import { profile } from "@/actions/profile";
 import { useSession } from "next-auth/react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 export type UserImage = {
   key: string;
@@ -90,13 +91,12 @@ const ProfileEditForm = ({ closeDialog }: ProfileEditFormProps) => {
           <div>
             <span className="relative aspect-video">
               {images[0].url ? (
-                <Image
-                  src={images[0].url || ""}
-                  alt="user profile picture"
-                  width={100}
-                  height={100}
-                  className="object-cover rounded-full"
-                />
+                <Avatar className="size-28">
+                  <AvatarImage src={user?.image || ""} />
+                  <AvatarFallback className="bg-amber-500">
+                    <User2 className="text-white" />
+                  </AvatarFallback>
+                </Avatar>
               ) : (
                 <div className="bg-amber-400 rounded-full size-20 flex justify-center items-center">
                   <User2 className="rounded-full" />

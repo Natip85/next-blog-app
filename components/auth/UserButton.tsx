@@ -32,7 +32,7 @@ const UserButton = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Avatar>
+        <Avatar className="size-10">
           <AvatarImage src={user?.image || ""} />
           <AvatarFallback className="bg-amber-500">
             <User2 className="text-white" />

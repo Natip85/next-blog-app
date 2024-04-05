@@ -39,6 +39,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ProfileEditForm from "@/components/auth/ProfileEditForm";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const ProfilePage = () => {
   const user = useCurrentUser();
@@ -94,7 +95,7 @@ const ProfilePage = () => {
                 Make changes to your about here.
               </TabsContent>
               <TabsContent value="account">
-                <div className="space-y-4 px-4">
+                <div className="space-y-4 px-4 py-4">
                   <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger className="w-full">
                       <div className="flex items-center justify-between">
@@ -110,13 +111,12 @@ const ProfilePage = () => {
                           <span className="text-sm">{user?.name}</span>
                           <span className="relative aspect-video">
                             {user?.image ? (
-                              <Image
-                                src={user?.image || ""}
-                                alt="user profile picture"
-                                width={30}
-                                height={30}
-                                className="object-cover rounded-full"
-                              />
+                              <Avatar className="size-7">
+                                <AvatarImage src={user?.image || ""} />
+                                <AvatarFallback className="bg-amber-500">
+                                  <User2 className="text-white" />
+                                </AvatarFallback>
+                              </Avatar>
                             ) : (
                               <div className="bg-amber-400 rounded-full size-8 flex justify-center items-center">
                                 <User2 className="rounded-full" />
@@ -133,16 +133,6 @@ const ProfilePage = () => {
                       <ProfileEditForm closeDialog={handleOpenDialog} />
                     </DialogContent>
                   </Dialog>
-                </div>
-                <Separator className="mt-5" />
-                <div className="flex justify-end my-5">
-                  <Button
-                    variant={"outline"}
-                    disabled={isPending}
-                    type="submit"
-                  >
-                    Save
-                  </Button>
                 </div>
               </TabsContent>
               <TabsContent value="security">
@@ -274,14 +264,12 @@ const ProfilePage = () => {
       <div className="hidden sm:flex flex-col h-screen flex-1 border-l p-5">
         <span>
           {user?.image ? (
-            <Image
-              src={user?.image || ""}
-              alt="user profile picture"
-              width={100}
-              height={100}
-              priority
-              className="object-cover rounded-full"
-            />
+            <Avatar className="size-32">
+              <AvatarImage src={user?.image || ""} />
+              <AvatarFallback className="bg-amber-500">
+                <User2 className="text-white" />
+              </AvatarFallback>
+            </Avatar>
           ) : (
             <div className="bg-amber-400 rounded-full size-24 flex justify-center items-center">
               <User2 className="rounded-full" size={75} />
