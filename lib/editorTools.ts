@@ -101,10 +101,11 @@ export const EditorTools = {
          * @param {File} file - file selected from the device or pasted by drag-n-drop
          * @return {Promise.<{success, file: {url}}>}
          */
-        uploadByFile(file: File) {
+        uploadByFile: async (file: File) => {
           // Log message
           console.log("Uploading file:", file);
-          // Return a resolved promise
+
+          //Return a resolved promise
           return Promise.resolve({
             success: 1,
             file: {
@@ -157,4 +158,16 @@ export const EditorTools = {
 
 export const i18n = {
   messages: {},
+};
+export const INITIAL_DATA = {
+  time: new Date().getTime(),
+  blocks: [
+    {
+      type: "header",
+      data: {
+        text: "Let's write something AWESOME 🌟",
+        level: 1,
+      },
+    },
+  ],
 };

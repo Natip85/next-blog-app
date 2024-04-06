@@ -12,13 +12,12 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import AuthCardWrapper from "./AuthCardWrapper";
-import { startTransition, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { LoginSchema } from "@/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormError from "../FormError";
 import FormSuccess from "../FormSuccess";
-import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { login } from "@/actions/login";
 

@@ -15,7 +15,6 @@ import AuthCardWrapper from "./AuthCardWrapper";
 import { useForm } from "react-hook-form";
 import { RegisterSchema } from "@/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import FormError from "../FormError";
 import FormSuccess from "../FormSuccess";
 import { register } from "@/actions/register";
@@ -32,20 +31,6 @@ const RegisterForm = () => {
     },
   });
   const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
-    // setError("");
-    // setSuccess("");
-    // axios
-    //   .post("/api/register", values)
-    //   .then((data) => {
-    //     if (data.status === 200) {
-    //       setSuccess(data.data.message);
-    //     }
-    //   })
-    //   .catch((res) => {
-    //     setError(res.response.data);
-    //     setIsLoading(false);
-    //   })
-    //   .finally(() => setIsLoading(false));
     setError("");
     setSuccess("");
     startTransition(() => {
