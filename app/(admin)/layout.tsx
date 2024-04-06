@@ -32,7 +32,10 @@ export default function AdminLayout({
         </div>
         <div className="flex items-center gap-5">
           <span>
-            <Link href={"/write"} className="flex items-center gap-2 text-sm">
+            <Link
+              href={"/article/new"}
+              className="flex items-center gap-2 text-sm"
+            >
               <Edit className="size-5" strokeWidth={1} /> Write
             </Link>
           </span>

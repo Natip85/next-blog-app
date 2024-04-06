@@ -22,7 +22,7 @@ export default function Home() {
             <div className="hidden sm:flex flex-row items-center">
               <NavLink href={"/"}>Our story</NavLink>
               <NavLink href={"/g"}>Membership</NavLink>
-              <NavLink href={"/g"}>Write</NavLink>
+              <NavLink href={"/article/new"}>Write</NavLink>
             </div>
             <NavLink href={"/auth/login"}>Sign in</NavLink>
 
