@@ -39,7 +39,10 @@ const UserButton = () => {
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[250px]">
+      <DropdownMenuContent
+        align="end"
+        className="w-[250px] flex flex-col p-2 gap-2"
+      >
         <DropdownMenuItem className="gap-2 hover:cursor-pointer" asChild>
           <Link href={"/profile"}>
             <User2 className="size-4" /> Profile

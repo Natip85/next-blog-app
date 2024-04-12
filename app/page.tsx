@@ -1,4 +1,4 @@
-import { Nav, NavLink } from "@/components/Nav";
+import { Nav, NavLink } from "@/components/nav/Nav";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 

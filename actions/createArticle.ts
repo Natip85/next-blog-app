@@ -3,6 +3,8 @@ import db from "@/db/db";
 import { currentUser } from "@/lib/auth";
 
 export const createArticle = async (values: any) => {
+  console.log("vals>>>", values);
+
   const user = await currentUser();
   if (!user) {
     return { error: "No user found" };

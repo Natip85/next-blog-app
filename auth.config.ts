@@ -63,7 +63,7 @@ export const authConfig = {
         return true;
       }
       if (!isLoggedIn && !isPublicRoute) {
-        return Response.redirect(new URL("/", nextUrl));
+        return Response.redirect(new URL("/auth/login", nextUrl));
       }
       return true;
     },
