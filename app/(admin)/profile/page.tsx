@@ -85,7 +85,6 @@ const ProfilePage = () => {
 
   const handleDeleteAccount = async (id: string) => {
     await axios.delete(`/api/auth/delete/${id}`).then((res) => {
-      console.log(res);
       if (res.status === 200) {
         setOpenDelete(!openDelete);
         logout();

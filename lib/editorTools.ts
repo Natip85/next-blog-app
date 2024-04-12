@@ -44,7 +44,7 @@ export const EditorTools = {
   header: {
     class: Header,
     config: {
-      placeholder: "Let`s write an awesome story! ✨",
+      // placeholder: "Let`s write an awesome story! ✨",
       defaultAlignment: "left",
       levels: [1, 2, 3, 4, 5],
       defaultLevel: 1,

@@ -33,7 +33,6 @@ const NewPasswordForm = () => {
     },
   });
   const onSubmit = (values: z.infer<typeof NewPasswordSchema>) => {
-    console.log(values);
     setError("");
     setSuccess("");
     startTransition(() => {

@@ -33,6 +33,7 @@ const Editor = ({ data, onChange, editorblock }: EditorProps) => {
       }
     };
   }, []);
+
   return <div id={editorblock} />;
 };
 
