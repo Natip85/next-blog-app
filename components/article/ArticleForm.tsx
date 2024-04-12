@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState, useTransition } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { OutputBlockData } from "@editorjs/editorjs";
@@ -9,14 +9,12 @@ import { createArticle } from "@/actions/createArticle";
 import { EditorTools } from "@/lib/editorTools";
 import EditorJS from "@editorjs/editorjs";
 import Link from "next/link";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+import { toast } from "sonner";
+
 import UserButton from "../auth/UserButton";
 import { ArrowDown01, ChevronDown, Edit3 } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import PublishArticleForm from "./PublishArticleForm";
 const ArticleEditor = dynamic(() => import("@/components/article/Editor"), {
   ssr: false,
 });
@@ -53,6 +51,10 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
           blocks: convertFromJSON(article?.editorData.blocks),
         };
   });
+  const [asPublished, setAsPublished] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  console.log({ asPublished });
 
   useEffect(() => {
     if (article) {
@@ -77,14 +79,19 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
 
   const handleSaveEditor = () => {
     if (!article) {
-      localStorage.removeItem("document");
-      const dataToCreate = {
-        version: editorData.version ?? null,
-        time: editorData.time ?? null,
-        blocks: convertToJSON(editorData.blocks),
-      };
-      createArticle(dataToCreate).then((res) => {
-        router.push(`/article/${res.success?.id}`);
+      startTransition(() => {
+        localStorage.removeItem("document");
+        const dataToCreate = {
+          version: editorData.version ?? null,
+          time: editorData.time ?? null,
+          blocks: convertToJSON(editorData.blocks),
+        };
+        createArticle(dataToCreate, false).then((res) => {
+          if (res.success) {
+            toast.success("Article successfully created");
+            router.push(`/article/${res.success?.id}`);
+          }
+        });
       });
     } else {
       localStorage.removeItem("edit-document");
@@ -101,31 +108,28 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
           </svg>
         </Link>
         <div className="flex items-center gap-5">
-          {/* <Button onClick={handleSaveEditor}>
-            {!article ? "Save" : "Update"}
-          </Button> */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <div>
-                {!article ? (
-                  <Button size={"sm"}>
-                    Save
-                    <ChevronDown className="size-5" />
-                  </Button>
-                ) : (
-                  <Button variant={"outline"}>
-                    Update <Edit3 />
-                  </Button>
-                )}
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={handleSaveEditor}>
-                As Draft
-              </DropdownMenuItem>
-              <DropdownMenuItem>Publish</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button
+            disabled={isPending}
+            onClick={handleSaveEditor}
+            variant={"outline"}
+            className="rounded-3xl"
+          >
+            Save as draft
+          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                onClick={() => setAsPublished(true)}
+                size={"sm"}
+                className="bg-green-600 rounded-3xl hover:bg-green-700"
+              >
+                Publish
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-5xl p-20">
+              <PublishArticleForm article={editorData} />
+            </DialogContent>
+          </Dialog>
           <UserButton />
         </div>
       </div>
