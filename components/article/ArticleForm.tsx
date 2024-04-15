@@ -10,27 +10,27 @@ import { EditorTools } from "@/lib/editorTools";
 import EditorJS from "@editorjs/editorjs";
 import Link from "next/link";
 import { toast } from "sonner";
-
 import UserButton from "../auth/UserButton";
-import { ArrowDown01, ChevronDown, Edit3 } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import PublishArticleForm from "./PublishArticleForm";
+
 const ArticleEditor = dynamic(() => import("@/components/article/Editor"), {
   ssr: false,
 });
-function convertToJSON(blocks: OutputBlockData[]) {
+export function convertToJSON(blocks: OutputBlockData[]) {
   return blocks.map((block) => ({
     id: block.id,
     type: block.type,
     data: JSON.stringify(block.data),
   }));
 }
-function convertFromJSON(blocks: any[]) {
+export function convertFromJSON(blocks: any[]) {
   return blocks?.map((block: any) => ({
     ...block,
     data: typeof block.data === "string" ? JSON.parse(block.data) : block.data,
   }));
 }
+
 interface ArticleFormProps {
   article: any;
 }
@@ -51,10 +51,7 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
           blocks: convertFromJSON(article?.editorData.blocks),
         };
   });
-  const [asPublished, setAsPublished] = useState(false);
   const [isPending, startTransition] = useTransition();
-
-  console.log({ asPublished });
 
   useEffect(() => {
     if (article) {
@@ -86,16 +83,15 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
           time: editorData.time ?? null,
           blocks: convertToJSON(editorData.blocks),
         };
-        createArticle(dataToCreate, false).then((res) => {
+        createArticle(dataToCreate, false, "").then((res) => {
           if (res.success) {
             toast.success("Article successfully created");
-            router.push(`/article/${res.success?.id}`);
+            router.push("/stories");
           }
         });
       });
     } else {
-      localStorage.removeItem("edit-document");
-      router.push("/stories");
+      //UPDATE
     }
   };
 
@@ -109,6 +105,7 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
         </Link>
         <div className="flex items-center gap-5">
           <Button
+            size={"xs"}
             disabled={isPending}
             onClick={handleSaveEditor}
             variant={"outline"}
@@ -119,14 +116,13 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                onClick={() => setAsPublished(true)}
-                size={"sm"}
+                size={"xs"}
                 className="bg-green-600 rounded-3xl hover:bg-green-700"
               >
                 Publish
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-5xl p-20">
+            <DialogContent className="max-w-5xl p-5">
               <PublishArticleForm article={editorData} />
             </DialogContent>
           </Dialog>
@@ -134,7 +130,7 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
         </div>
       </div>
       {!article ? (
-        <>
+        <div className="p-4">
           <Suspense fallback={`Loading...`}>
             <ArticleEditor
               data={editorData}
@@ -142,11 +138,11 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
               editorblock="editorjs-container"
             />
           </Suspense>
-        </>
+        </div>
       ) : (
-        <>
+        <div className="p-4">
           <div id="edit-editor" />
-        </>
+        </div>
       )}
     </div>
   );
