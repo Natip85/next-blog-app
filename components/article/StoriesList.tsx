@@ -11,8 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { ArrowDown, ChevronDown } from "lucide-react";
-import { Button } from "../ui/button";
+import { ChevronDown } from "lucide-react";
 
 interface StoriesListProps {
   articles: any;
