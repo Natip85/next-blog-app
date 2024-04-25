@@ -10,7 +10,7 @@ import { createArticle } from "@/actions/createArticle";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { publishDraftArticle } from "./publishDraftArticle";
+import { publishDraftArticle } from "../../actions/publishDraftArticle";
 
 interface PublishArticleFormProps {
   draftEditorData: any;
@@ -87,7 +87,7 @@ const PublishArticleForm = ({
         publishDraftArticle(article.id, dataToCreate, topicId, topic).then(
           (res) => {
             toast.success("Article successfully published");
-            router.push("/stories");
+            router.push(`/article-details/${res.success?.id}`);
           }
         );
       } else {
@@ -100,7 +100,7 @@ const PublishArticleForm = ({
         createArticle(dataToCreate, true, topic).then((res) => {
           if (res.success) {
             toast.success("Article successfully created");
-            router.push("/stories");
+            router.push(`/article-details/${res.success?.id}`);
           }
         });
       }
