@@ -38,9 +38,6 @@ const PublishArticleForm = ({
   const [isPending, startTransition] = useTransition();
   const [topic, setTopic] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
-  console.log("draftEditorData>>>", draftEditorData);
-  console.log("publishEditorData>>>", publishEditorData);
-  console.log("article>>>", article);
 
   useEffect(() => {
     if (topic && topic?.length < 2) {
@@ -89,7 +86,6 @@ const PublishArticleForm = ({
         const topicId = article ? article.categoryId : undefined;
         publishDraftArticle(article.id, dataToCreate, topicId, topic).then(
           (res) => {
-            console.log(res);
             toast.success("Article successfully published");
             router.push("/stories");
           }
@@ -114,7 +110,7 @@ const PublishArticleForm = ({
     <div className="flex flex-col sm:flex-row justify-between gap-5 p-10">
       <div className="flex-1 flex flex-col gap-5">
         <div className="font-bold">Article preview</div>
-        <div className="max-h-[500px] overflow-y-auto">
+        <div className="max-h-[500px] overflow-x-auto sm:overflow-y-auto">
           <div id="publishing-editor" />
         </div>
       </div>

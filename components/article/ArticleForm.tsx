@@ -51,9 +51,6 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
           blocks: convertFromJSON(article?.editorData.blocks),
         };
   });
-  console.log({ article });
-  console.log({ draftEditorData });
-  console.log({ editEditorData });
 
   const [isPending, startTransition] = useTransition();
 
