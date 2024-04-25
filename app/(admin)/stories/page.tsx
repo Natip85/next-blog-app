@@ -1,11 +1,10 @@
-import { getArticlesByUser } from "@/actions/getArticlesByUser";
+import { getArticles } from "@/actions/getArticles";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import StoriesList from "@/components/article/StoriesList";
 
 const StoriesPage = async () => {
-  const articles = await getArticlesByUser();
-  console.log(articles?.success?.draftArticles);
+  const articles = await getArticles();
 
   return (
     <div className="container max-w-7xl flex justify-between gap-10">
@@ -21,10 +20,10 @@ const StoriesPage = async () => {
             <Link href={"/article/new"}>Write an article</Link>
           </Button>
         </div>
-        <StoriesList articles={articles?.success} />
+        <StoriesList articles={articles} />
       </div>
       <div className="hidden sm:flex flex-col h-screen flex-1 border-l p-5">
-        SEcond part
+        Second part
       </div>
     </div>
   );

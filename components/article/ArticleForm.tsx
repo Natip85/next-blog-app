@@ -2,7 +2,6 @@
 import { Suspense, useEffect, useRef, useState, useTransition } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { OutputBlockData } from "@editorjs/editorjs";
 import { Button } from "../ui/button";
 import { INITIAL_DATA } from "@/lib/editorTools";
 import { createArticle } from "@/actions/createArticle";
@@ -18,7 +17,7 @@ import { updateArticle } from "@/actions/updateArticle";
 const ArticleEditor = dynamic(() => import("@/components/article/Editor"), {
   ssr: false,
 });
-export function convertToJSON(blocks: OutputBlockData[]) {
+export function convertToJSON(blocks: any[]) {
   return blocks.map((block) => ({
     id: block.id,
     type: block.type,
@@ -39,7 +38,7 @@ interface ArticleFormProps {
 const ArticleForm = ({ article }: ArticleFormProps) => {
   const router = useRouter();
   const ref = useRef<EditorJS | null>(null);
-  const [editorData, setEditorData] = useState<any>(() => {
+  const [draftEditorData, setDraftEditorData] = useState<any>(() => {
     const storedData = localStorage.getItem("document");
     return storedData ? JSON.parse(storedData) : INITIAL_DATA;
   });
@@ -52,6 +51,8 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
           blocks: convertFromJSON(article?.editorData.blocks),
         };
   });
+  console.log({ article });
+  console.log({ draftEditorData });
   console.log({ editEditorData });
 
   const [isPending, startTransition] = useTransition();
@@ -62,7 +63,7 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
         const editor = new EditorJS({
           holder: "edit-editor",
           tools: EditorTools,
-          data: { ...editEditorData },
+          data: editEditorData,
           async onChange(api, event) {
             const data = await api.saver.save();
             let logDataString = JSON.stringify(data);
@@ -77,25 +78,24 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
 
   const handleSaveEditor = () => {
     if (!article) {
-      //CREATE
+      //CREATE DRAFT
       startTransition(() => {
-        localStorage.removeItem("document");
         const dataToCreate = {
-          version: editorData.version ?? null,
-          time: editorData.time ?? null,
-          blocks: convertToJSON(editorData.blocks),
+          version: draftEditorData.version ?? null,
+          time: draftEditorData.time ?? null,
+          blocks: convertToJSON(draftEditorData.blocks),
         };
         createArticle(dataToCreate, false, "").then((res) => {
           if (res.success) {
             toast.success("Article successfully created");
             router.push("/stories");
+            localStorage.removeItem("document");
           }
         });
       });
     } else {
       //UPDATE
       startTransition(() => {
-        localStorage.removeItem("edit-document");
         const dataToCreate = {
           version: editEditorData.version ?? null,
           time: editEditorData.time ?? null,
@@ -103,8 +103,9 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
         };
         updateArticle(article.id, dataToCreate).then((res) => {
           if (res.success) {
-            toast.success("Draft successfully saved");
-            router.push("/stories");
+            toast.success("Article successfully saved");
+            router.push(`/stories`);
+            localStorage.removeItem("edit-document");
           }
         });
       });
@@ -120,28 +121,55 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
           </svg>
         </Link>
         <div className="flex items-center gap-3">
-          <Button
-            size={"xs"}
-            disabled={isPending}
-            onClick={handleSaveEditor}
-            variant={"outline"}
-            className="rounded-3xl"
-          >
-            Save as draft
-          </Button>
-          <Dialog>
-            <DialogTrigger asChild>
+          {article && article.isPublished ? (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  size={"xs"}
+                  className="bg-green-600 rounded-3xl hover:bg-green-700"
+                >
+                  Publish
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-5xl p-5">
+                <PublishArticleForm
+                  draftEditorData={draftEditorData}
+                  publishEditorData={editEditorData}
+                  article={article}
+                />
+              </DialogContent>
+            </Dialog>
+          ) : (
+            <>
               <Button
                 size={"xs"}
-                className="bg-green-600 rounded-3xl hover:bg-green-700"
+                disabled={isPending}
+                onClick={handleSaveEditor}
+                variant={"outline"}
+                className="rounded-3xl"
               >
-                Publish
+                Save as draft
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-5xl p-5">
-              <PublishArticleForm article={editorData} />
-            </DialogContent>
-          </Dialog>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    size={"xs"}
+                    className="bg-green-600 rounded-3xl hover:bg-green-700"
+                  >
+                    Publish
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-5xl p-5">
+                  <PublishArticleForm
+                    draftEditorData={draftEditorData}
+                    publishEditorData={editEditorData}
+                    article={article}
+                  />
+                </DialogContent>
+              </Dialog>
+            </>
+          )}
+
           <UserButton />
         </div>
       </div>
@@ -149,8 +177,8 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
         <div className="p-4">
           <Suspense fallback={`Loading...`}>
             <ArticleEditor
-              data={editorData}
-              onChange={setEditorData}
+              data={draftEditorData}
+              onChange={setDraftEditorData}
               editorblock="editorjs-container"
             />
           </Suspense>
