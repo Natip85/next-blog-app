@@ -52,7 +52,6 @@ const StoriesList = ({ articles }: StoriesListProps) => {
   function handleDelete(id: string | undefined) {
     startTransition(() => {
       deleteArticle(id).then((res) => {
-        console.log("res", res);
         if (res.success) {
           setOpenDelete(!openDelete);
           toast.success("Article successfully deleted");
@@ -93,7 +92,7 @@ const StoriesList = ({ articles }: StoriesListProps) => {
                 })}
                 <div className="flex items-center">
                   <span className="text-xs text-muted-foreground mt-2 p-2">
-                    Last edited {moment(draft.updatedAt).format("MMM do YYYY")}
+                    Last edited {moment(draft.updatedAt).format("MMM D YYYY")}
                   </span>
                   ·
                   <span className="text-xs text-muted-foreground mt-2  p-2">
@@ -167,8 +166,8 @@ const StoriesList = ({ articles }: StoriesListProps) => {
                 })}
                 <div className="flex items-center">
                   <span className="text-xs text-muted-foreground mt-2 p-2">
-                    Last edited
-                    {moment(published.updatedAt).format("MMM do YYYY")}
+                    Last edited{" "}
+                    {moment(published.updatedAt).format("MMM, D YYYY")}
                   </span>
                   ·
                   <span className="text-xs text-muted-foreground mt-2  p-2">

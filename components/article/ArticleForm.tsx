@@ -84,9 +84,10 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
         };
         createArticle(dataToCreate, false, "").then((res) => {
           if (res.success) {
+            localStorage.removeItem("document");
             toast.success("Article successfully created");
             router.push("/stories");
-            localStorage.removeItem("document");
+            router.refresh();
           }
         });
       });
@@ -100,9 +101,10 @@ const ArticleForm = ({ article }: ArticleFormProps) => {
         };
         updateArticle(article.id, dataToCreate).then((res) => {
           if (res.success) {
+            localStorage.removeItem("edit-document");
             toast.success("Article successfully saved");
             router.push(`/stories`);
-            localStorage.removeItem("edit-document");
+            router.refresh();
           }
         });
       });

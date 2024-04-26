@@ -95,7 +95,7 @@ model Article {
   isPublished Boolean @default(false)
   views       Int      @default(0)
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime @updatedAt @default(now())
   readTime    Int 
 
   categoryId  String?   @db.ObjectId
