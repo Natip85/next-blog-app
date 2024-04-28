@@ -4,20 +4,16 @@ import { currentUser } from "@/lib/auth";
 
 export const getAllArticles = async (page: number) => {
   try {
-    const perPage = 2;
+    const perPage = 3;
     const user = await currentUser();
     if (!user) return null;
-
-    // Calculate the offset based on the page number
     const offset = (page - 1) * perPage;
-
-    // Fetch articles with pagination from the database
     const articles = await db.article.findMany({
+      where: { isPublished: true },
       skip: offset,
       take: perPage,
+      include: { user: true, category: true },
     });
-
-    // Return the fetched articles
     return articles;
   } catch (error: any) {
     console.error("Error fetching articles:", error);
