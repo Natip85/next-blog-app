@@ -8,21 +8,21 @@ export default async function FeedPage() {
   console.log("Page articles>>>", allArticles);
 
   return (
-    <div className="container flex p-10">
+    <div className="container max-w-7xl flex flex-col sm:flex-row p-10 gap-10">
       <div className="flex-1">
-        <Tabs defaultValue="drafts">
-          <TabsList className="bg-transparent">
-            <TabsTrigger value="drafts">Drafts</TabsTrigger>
+        <Tabs defaultValue="forYou">
+          <TabsList className="bg-white sticky top-0 z-50 w-full">
+            <TabsTrigger value="forYou">For you</TabsTrigger>
             <TabsTrigger value="published">Published</TabsTrigger>
           </TabsList>
-          <TabsContent value="drafts">
+          <TabsContent value="forYou">
             <ArticleCard articles={allArticles} />
             <ArticlesList />
           </TabsContent>
           <TabsContent value="published">published here</TabsContent>
         </Tabs>
       </div>
-      <div className="w-1/3">second part</div>
+      <div className="w-1/4 border-l-[1px]">second part</div>
     </div>
   );
 }

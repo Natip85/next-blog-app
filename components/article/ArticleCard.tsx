@@ -19,11 +19,14 @@ const ArticleCard = ({ articles }: ArticleCardProps) => {
   );
 
   return (
-    <>
+    <div className="flex flex-col gap-3">
       {articles.map((article: any) => (
-        <Card key={article.id}>
-          <CardContent className="p-5 h-[175px] overflow-hidden">
-            <div className="flex items-center gap-2">
+        <Card
+          key={article.id}
+          className="border-0 border-b-[1px] shadow-none rounded-none"
+        >
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 mb-3">
               <div>
                 <Avatar>
                   <AvatarImage src={article?.user?.image} />
@@ -38,34 +41,27 @@ const ArticleCard = ({ articles }: ArticleCardProps) => {
               </div>
             </div>
             <div>
-              {(article?.editorData as any)?.blocks.map((item: any) => {
-                if (item.type === "header") {
-                  const headerData = JSON.parse(item.data);
-                  return (
-                    <Link
-                      href={`/article-details/${article.id}`}
-                      key={item.id}
-                      className="pt-2 font-bold hover:cursor-pointer"
-                    >
-                      <div>{headerData.text}</div>
-                    </Link>
-                  );
-                }
-                if (item.type === "paragraph") {
-                  const textData = JSON.parse(item.data);
-                  return (
-                    <Link
-                      href={`/article-details/${article.id}`}
-                      key={item.id}
-                      className="hover:cursor-pointer"
-                    >
-                      <div className="overfolw-hidden w-[550px] truncate">
-                        {textData.text}
-                      </div>
-                    </Link>
-                  );
-                }
-              })}
+              <Link
+                href={`/article-details/${article.id}`}
+                className="hover:cursor-pointer flex flex-col gap-3"
+              >
+                {(article?.editorData as any)?.blocks.map(
+                  (item: any, index: number) => {
+                    if (item.type === "header") {
+                      const headerData = JSON.parse(item.data);
+                      return (
+                        <div
+                          key={`${article.id}-header-${index}`}
+                          className="font-bold text-xl"
+                        >
+                          {headerData.text}
+                        </div>
+                      );
+                    }
+                  }
+                )}
+                <div className="font-normal">{article?.previewSubtitle}</div>
+              </Link>
             </div>
           </CardContent>
           <CardFooter>
@@ -77,7 +73,7 @@ const ArticleCard = ({ articles }: ArticleCardProps) => {
           </CardFooter>
         </Card>
       ))}
-    </>
+    </div>
   );
 };
 
