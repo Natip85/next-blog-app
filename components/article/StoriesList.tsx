@@ -27,7 +27,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 interface StoriesListProps {
-  articles: any[] | null;
+  articles: any;
 }
 
 const StoriesList = ({ articles }: StoriesListProps) => {
@@ -40,9 +40,11 @@ const StoriesList = ({ articles }: StoriesListProps) => {
   useEffect(() => {
     if (articles) {
       const publishedArticles = articles.filter(
-        (article) => article.isPublished
+        (article: any) => article.isPublished
       );
-      const draftArticles = articles.filter((article) => !article.isPublished);
+      const draftArticles = articles.filter(
+        (article: any) => !article.isPublished
+      );
       setDrafts(draftArticles);
       setPublished(publishedArticles);
     }
