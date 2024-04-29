@@ -4,7 +4,6 @@ import moment from "moment";
 import { Separator } from "../ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import Link from "next/link";
-import { Article } from "@prisma/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,14 +27,14 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 interface StoriesListProps {
-  articles: Article[] | null;
+  articles: any[] | null;
 }
 
 const StoriesList = ({ articles }: StoriesListProps) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [drafts, setDrafts] = useState<Article[]>();
-  const [published, setPublished] = useState<Article[]>();
+  const [drafts, setDrafts] = useState<any[]>();
+  const [published, setPublished] = useState<any[]>();
   const [openDelete, setOpenDelete] = useState(false);
 
   useEffect(() => {
