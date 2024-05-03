@@ -12,11 +12,8 @@ import { useRouter } from "next/navigation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { publishDraftArticle } from "../../actions/publishDraftArticle";
 import { Textarea } from "../ui/textarea";
-import { Separator } from "../ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Terminal, User2 } from "lucide-react";
+import { Terminal } from "lucide-react";
 import Image from "next/image";
-import { AspectRatio } from "../ui/aspect-ratio";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 interface PublishArticleFormProps {
@@ -34,15 +31,6 @@ const PublishArticleForm = ({
   const user = useCurrentUser();
   const router = useRouter();
   const ref = useRef<EditorJS | null>(null);
-  const [draftData, setDraftData] = useState<any>(() => {
-    const storedData = localStorage.getItem("document");
-    return storedData
-      ? JSON.parse(storedData)
-      : {
-          time: new Date().getTime(),
-          blocks: convertFromJSON(draftEditorData?.editorData?.blocks),
-        };
-  });
 
   const [isPending, startTransition] = useTransition();
   const [topic, setTopic] = useState<string | undefined>();
@@ -125,20 +113,20 @@ const PublishArticleForm = ({
   }
   return (
     <>
-      <div className="flex flex-col-reverse sm:flex-row justify-between gap-5 p-10 max-h-[50vh] sm:max-h-[75vh] overflow-y-auto">
-        <div className="flex-1 flex flex-col justify-between gap-8">
+      <div className="flex flex-col sm:flex-row justify-between gap-5 p-10 max-h-[75vh] sm:max-h-[75vh] overflow-y-auto">
+        <div className="flex-1 flex flex-col justify-between gap-5">
           <div className="relative aspect-video h-[50px]">
             <h2 className="font-bold mb-5">Article preview</h2>
             {image ? (
-              <AspectRatio ratio={16 / 6} className="bg-muted">
+              <div className="relative max-h-[200px] w-full aspect-video  px-10">
                 <Image
                   src={image}
-                  alt="Photo by Drew Beamer"
+                  alt={"article-pic"}
                   fill
-                  sizes="30"
-                  className="rounded-md object-cover"
+                  sizes="2"
+                  className="w-full mx-auto"
                 />
-              </AspectRatio>
+              </div>
             ) : (
               <Alert>
                 <Terminal className="h-4 w-4" />
@@ -151,25 +139,8 @@ const PublishArticleForm = ({
             )}
           </div>
 
-          <div className="sm:overflow-y-auto mt-20 md:mt-44">
+          <div className="pt-36">
             <div id="publishing-editor" />
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <Separator />
-            <Textarea
-              id="preview-subtitle"
-              placeholder="Write a preview subtitle..."
-              onChange={(e) => setPrevSubtitle(e.target.value)}
-            />
-            <label
-              htmlFor="preview-subtitle"
-              className="text-xs text-muted-foreground"
-            >
-              <span className="font-bold">Note:</span> Changes here will affect
-              how your story appears in public places like Medium’s homepage and
-              in subscribers’ inboxes — not the contents of the story itself.
-            </label>
           </div>
         </div>
         <div className="flex flex-1 flex-col gap-10">
@@ -186,6 +157,21 @@ const PublishArticleForm = ({
               onChange={(e) => setTopic(e.target.value)}
             />
             {error && <div className="text-xs text-destructive">{error}</div>}
+          </div>
+          <div className="flex flex-col gap-3">
+            <Textarea
+              id="preview-subtitle"
+              placeholder="Write an article preview subtitle..."
+              onChange={(e) => setPrevSubtitle(e.target.value)}
+            />
+            <label
+              htmlFor="preview-subtitle"
+              className="text-xs text-muted-foreground"
+            >
+              <span className="font-bold">Note:</span> Changes here will affect
+              how your story appears in public places like Medium’s homepage and
+              in subscribers’ inboxes — not the contents of the story itself.
+            </label>
           </div>
         </div>
       </div>
