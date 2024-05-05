@@ -26,17 +26,36 @@ import { useState, useTransition } from "react";
 import { createFavorite } from "@/actions/createFavorite";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { Button } from "../ui/button";
+import { deleteArticle } from "@/actions/deleteArticle";
 
 interface SavedArticlesListProps {
   articles: any;
   favorites: any;
+  history: any;
 }
-const SavedArticlesList = ({ articles, favorites }: SavedArticlesListProps) => {
+const SavedArticlesList = ({
+  articles,
+  favorites,
+  history,
+}: SavedArticlesListProps) => {
+  console.log({ history });
+
   const router = useRouter();
   const user = useCurrentUser();
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
+  const [openDelete, setOpenDelete] = useState(false);
 
   function handleRemoveFavorite(id: string) {
     setError("");
@@ -53,6 +72,17 @@ const SavedArticlesList = ({ articles, favorites }: SavedArticlesListProps) => {
           toast.success(res.success);
         }
         router.refresh();
+      });
+    });
+  }
+  function handleDelete(id: string | undefined) {
+    startTransition(() => {
+      deleteArticle(id).then((res) => {
+        if (res.success) {
+          setOpenDelete(!openDelete);
+          toast.success("Article successfully deleted");
+          router.refresh();
+        }
       });
     });
   }
@@ -162,18 +192,44 @@ const SavedArticlesList = ({ articles, favorites }: SavedArticlesListProps) => {
                             <DropdownMenuItem>
                               <span className="hover:cursor-pointer">
                                 <Link href={`/article/${article.id}`}>
-                                  Edit story
+                                  Edit article
                                 </Link>
                               </span>
                             </DropdownMenuItem>
                           </DropdownMenuGroup>
                           <DropdownMenuSeparator />
                           <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                              <span className="hover:cursor-pointer text-destructive">
-                                Delete story
-                              </span>
-                            </DropdownMenuItem>
+                            <Dialog
+                              open={openDelete}
+                              onOpenChange={setOpenDelete}
+                            >
+                              <DialogTrigger className="relative w-full flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm text-destructive outline-none transition-colors focus:bg-accent hover:bg-accent focus:text-destructive data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                                Delete
+                              </DialogTrigger>
+                              <DialogContent className="shadow-md rounded-none flex flex-col gap-10 justify-center items-center py-48">
+                                <DialogHeader className="flex flex-col gap-5">
+                                  <DialogTitle className="text-3xl text-center">
+                                    Delete story
+                                  </DialogTitle>
+                                  <DialogDescription>
+                                    Deletion is not reversible, and the story
+                                    will be completely deleted.
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="flex justify-end gap-5">
+                                  <DialogClose className="text-sm text-destructive rounded-3xl border border-destructive hover:text-red-700 hover:border-red-700 hover:bg-transparent px-3">
+                                    Cancel
+                                  </DialogClose>
+                                  <Button
+                                    disabled={isPending}
+                                    onClick={() => handleDelete(article.id)}
+                                    className="bg-destructive text-white rounded-3xl hover:bg-red-700"
+                                  >
+                                    Delete
+                                  </Button>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
                           </DropdownMenuGroup>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -279,7 +335,7 @@ const SavedArticlesList = ({ articles, favorites }: SavedArticlesListProps) => {
                         <DropdownMenuItem
                           onClick={() => handleRemoveFavorite(favArticle.id)}
                         >
-                          <span className="hover:cursor-pointer">
+                          <span className="hover:cursor-pointer text-destructive">
                             Remove article
                           </span>
                         </DropdownMenuItem>
@@ -287,7 +343,7 @@ const SavedArticlesList = ({ articles, favorites }: SavedArticlesListProps) => {
                       <DropdownMenuSeparator />
                       <DropdownMenuGroup>
                         <DropdownMenuItem>
-                          <span className="hover:cursor-pointer text-destructive">
+                          <span className="hover:cursor-pointer ">
                             Follow author
                           </span>
                         </DropdownMenuItem>

@@ -242,7 +242,7 @@ const ArticleDetailsClient = ({
           <div>
             <Avatar className="size-10">
               <AvatarImage src={article?.user?.image} />
-              <AvatarFallback>
+              <AvatarFallback className="bg-green-600">
                 <User2 className="text-white" />
               </AvatarFallback>
             </Avatar>
