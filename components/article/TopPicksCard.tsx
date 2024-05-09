@@ -10,7 +10,7 @@ interface TopPicksCardProps {
 }
 const TopPicksCard = ({ articles }: TopPicksCardProps) => {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       {articles.map((article: any) => (
         <Link key={article.id} href={`/article-details/${article.id}`}>
           <Card className="w-full border-0 shadow-none">

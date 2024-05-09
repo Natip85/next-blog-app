@@ -23,10 +23,12 @@ export default async function FeedPage() {
           <TabsContent value="following">following goes here</TabsContent>
         </Tabs>
       </div>
-      <div className="w-1/3 border-l-[1px] p-5">
-        <h3 className="text-sm font-semibold mb-5">Top picks</h3>
-        <div>
-          <TopPicksCard articles={topPicks} />
+      <div className=" w-1/3 border-l-[1px] p-5 hidden md:block">
+        <div className="md:sticky md:top-0 pt-16">
+          <h3 className="text-sm font-semibold mb-5">Top picks</h3>
+          <div>
+            <TopPicksCard articles={topPicks} />
+          </div>
         </div>
       </div>
     </div>
