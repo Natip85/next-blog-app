@@ -20,7 +20,7 @@ export default async function FeedPage() {
 
   // const shuffledProducts = shuffleArray(allArticles);
   return (
-    <div className="container max-w-5xl flex flex-col md:flex-row p-10 gap-10">
+    <div className="container max-w-7xl flex flex-col md:flex-row p-10 gap-10">
       <div className="flex-1">
         <Tabs defaultValue="forYou">
           <TabsList className="bg-white sticky top-0 z-50 w-full py-8 border-b-[1px] rounded-none">
@@ -34,7 +34,7 @@ export default async function FeedPage() {
           <TabsContent value="following">following goes here</TabsContent>
         </Tabs>
       </div>
-      <div className="w-1/4 border-l-[1px] p-5">
+      <div className="w-1/3 border-l-[1px] p-5">
         <h3 className="text-sm font-semibold mb-5">Top picks</h3>
         <div>
           <TopPicksCard articles={topPicks} />
