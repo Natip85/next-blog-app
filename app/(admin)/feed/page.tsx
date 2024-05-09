@@ -8,17 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export default async function FeedPage() {
   const [allArticles, topPicks] =
     (await Promise.all([getAllArticles(1), getTopPicks()])) || null;
-  console.log({ topPicks });
-
-  // function shuffleArray(array: any) {
-  //   for (let i = array.length - 1; i > 0; i--) {
-  //     const j = Math.floor(Math.random() * (i + 1));
-  //     [array[i], array[j]] = [array[j], array[i]];
-  //   }
-  //   return array;
-  // }
-
-  // const shuffledProducts = shuffleArray(allArticles);
   return (
     <div className="container max-w-7xl flex flex-col md:flex-row p-10 gap-10">
       <div className="flex-1">
