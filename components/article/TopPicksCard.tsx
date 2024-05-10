@@ -4,6 +4,7 @@ import { User2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Card, CardContent } from "../ui/card";
 import Link from "next/link";
+import { Button } from "../ui/button";
 
 interface TopPicksCardProps {
   articles: any;
@@ -48,6 +49,17 @@ const TopPicksCard = ({ articles }: TopPicksCardProps) => {
           </Card>
         </Link>
       ))}
+      <div>
+        <Button
+          asChild
+          variant={"link"}
+          className="p-0 text-green-600 hover:text-black hover:no-underline"
+        >
+          <Link href={"#"} className="text-xs">
+            See all top picks
+          </Link>
+        </Button>
+      </div>
     </div>
   );
 };
