@@ -71,9 +71,9 @@ const UserButton = () => {
           </Link>
         </DropdownMenuItem>
         <Separator className="my-3" />
-        <DropdownMenuItem className=" flex flex-col items-start">
+        <DropdownMenuItem className="w-full flex flex-col items-start">
           <LogoutButton>
-            <div className="flex items-center mb-3 hover:cursor-pointer">
+            <div className="flex items-center mb-3 hover:cursor-pointer w-full">
               <LogOut className="size-4 mr-2" />
               Sign out
             </div>
