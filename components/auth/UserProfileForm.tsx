@@ -22,7 +22,6 @@ interface UserProfileFormProps {
   dbUser: any;
 }
 const UserProfileForm = ({ dbUser }: UserProfileFormProps) => {
-  console.log({ dbUser });
   const user = useCurrentUser();
   const [isFollowing, setIsFollowing] = useState(false);
   const [open, setOpen] = useState(false);
